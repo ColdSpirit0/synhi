@@ -1,5 +1,5 @@
 /*
-    Simple syntax highlighter
+    Synhi - simple syntax highlighter
     https://github.com/ColdSpirit0/synhi 
 */
 
