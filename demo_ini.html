@@ -1,0 +1,100 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Synhi demo</title>
+
+    <style id="compiled-css" type="text/css">
+        .hl_title {
+            color: #194185;
+            text-transform: uppercase;
+        }
+        
+        .hl_comment {
+            color: gray;
+        }
+        
+        .hl_special {
+            color: orange;
+        }
+        
+        .hl_variable {
+            color: blue;
+        }
+        
+        .hl_digit {
+            color: #900aff;
+        }
+        
+        .hl_value {
+            color: brown;
+        }
+        
+        .hl_url {
+            color: darkblue;
+            text-decoration: underline;
+        }
+    </style>
+    <script type="text/javascript">
+        /*
+            Simple syntax highlighter
+            https://github.com/ColdSpirit0/synhi 
+        */
+
+        function highlight(target_element, regex, classes) {
+            // set global flag
+            regex = new RegExp(regex.source, "g");
+
+            // highlight text wrapper
+            var prefix = "<span class='" + classes + "'>";
+            var suffix = "</span>";
+
+            // loop through all nodes and replace text to elements
+            var new_html = "";
+            for (var i = 0; i < target_element.childNodes.length; i++) {
+                var node = target_element.childNodes[i];
+
+                if (node.nodeType === Node.TEXT_NODE) {
+                    new_html += node.data.replaceAll(regex, (text, group) => {
+                        // wrap up only group text, not all match
+                        var start = text.substring(0, text.indexOf(group));
+                        var end = text.substring(text.indexOf(group) + group.length, text.length);
+                        return start + prefix + group + suffix + end;
+                    });
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    // dont touch already wrapped text
+                    new_html += node.outerHTML;
+                }
+            }
+
+            target_element.innerHTML = new_html;
+        }
+    </script>
+</head>
+
+<body>
+    <div class="ini">
+        Example from wiki: https://en.wikipedia.org/wiki/INI_file#Example<br>
+        <br> ; last modified 1 April 2001 by John Doe<br> [owner]
+        <br> name=John Doe<br> organization=Acme Widgets Inc.<br>
+        <br> [database]
+        <br> ; use IP address in case network name resolution is not working<br> server=192.0.2.62
+        <br> port=143
+        <br> file="payroll.dat"
+    </div>
+    <script type="text/javascript">
+        // find element
+        var ini = document.querySelector(".ini");
+
+        // highlight text by priority
+        highlight(ini, /(;.+)/, "hl_comment");
+        highlight(ini, /(\[.*\])/, "hl_title");
+        highlight(ini, /((?:https:|http:|www\.)\S*)/, "hl_url");
+        highlight(ini, /(\w+)=/, "hl_variable");
+        highlight(ini, /(\d+)/, "hl_digit");
+        highlight(ini, /=(.+)/, "hl_value");
+        highlight(ini, /(=)/, "hl_special");
+    </script>
+</body>
+
+</html>
